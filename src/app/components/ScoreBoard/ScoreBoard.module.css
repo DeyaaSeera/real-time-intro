@@ -1,0 +1,20 @@
+.scoreBoard {
+    background-color: #eee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 0;
+    flex-wrap: wrap;
+}
+.gameSection {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    justify-content: center;
+    gap: 5rem;
+}
+.seperator {
+    display: flex;
+    align-items: center;
+    font-size: 30px;
+}
