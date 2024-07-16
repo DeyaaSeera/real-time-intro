@@ -1,5 +1,5 @@
 .scoreBoard {
-    background-color: #eee;
+    background-color: #fafafa;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -8,13 +8,18 @@
 }
 .gameSection {
     display: flex;
-    width: 100%;
     justify-content: center;
     justify-content: center;
     gap: 5rem;
+    padding: 10px;
+    border-radius: 8px;
+    width: 100%;
 }
-.seperator {
+.matchInfo {
     display: flex;
     align-items: center;
-    font-size: 30px;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1rem;
+    font-size: 20px;
 }
