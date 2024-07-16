@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { createServerSentEvent } from "@/app/utils/server-push.utils";
 
 const prisma = new PrismaClient();
 
@@ -49,6 +50,13 @@ export async function PUT(
         : null,
     };
 
+    // Send SSE to notify clients about the update
+    const event = {
+      type: "match_update",
+      data: parsedUpdatedMatch,
+    };
+    createServerSentEvent(event);
+
     return NextResponse.json(parsedUpdatedMatch);
   } catch (error) {
     return NextResponse.json({ error: error }, { status: 500 });
@@ -65,6 +73,14 @@ export async function DELETE(
     await prisma.match.delete({
       where: { id: Number(id) },
     });
+
+    // Send SSE to notify clients about the deletion
+    const event = {
+      type: "match_delete",
+      id: Number(id),
+    };
+    createServerSentEvent(event);
+
     return NextResponse.json({ message: "Match deleted successfully" });
   } catch (error) {
     return NextResponse.json({ error: error }, { status: 500 });
