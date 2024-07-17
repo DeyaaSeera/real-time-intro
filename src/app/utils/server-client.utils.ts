@@ -1,15 +1,9 @@
-import { NextApiResponse } from 'next';
+export const clients = new Set<WritableStreamDefaultWriter>();
 
-interface Client {
-  res: NextApiResponse;
-}
-
-export const clients = new Set<Client>();
-
-export const addClient = (client: Client) => {
-  clients.add(client);
+export const addClient = (writer: WritableStreamDefaultWriter) => {
+  clients.add(writer);
 };
 
-export const removeClient = (client: Client) => {
-  clients.delete(client);
+export const removeClient = (writer: WritableStreamDefaultWriter) => {
+  clients.delete(writer);
 };

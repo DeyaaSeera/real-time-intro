@@ -8,7 +8,9 @@ export interface ServerSentEvent {
 
 export const createServerSentEvent = (event: ServerSentEvent) => {
   const eventData = `data: ${JSON.stringify(event)}\n\n`;
-  clients.forEach((client) => {
-    client.res.write(eventData);
+  const encoder = new TextEncoder();
+
+  clients.forEach((writer) => {
+    writer.write(encoder.encode(eventData));
   });
 };

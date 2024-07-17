@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { createServerSentEvent } from "@/app/utils/server-push.utils";
 
 const prisma = new PrismaClient();
 
@@ -14,7 +15,7 @@ export async function GET() {
   return NextResponse.json(parsedMatches);
 }
 
-// Data example 
+// Data example
 // const dataShape = {
 //   startTime: "2024-07-16T13:34:00.000Z",
 //   matchData: {
@@ -61,7 +62,6 @@ export async function GET() {
 //   },
 // };
 
-
 // POST /api/match
 export async function POST(request: Request) {
   const data = await request.json();
@@ -74,5 +74,16 @@ export async function POST(request: Request) {
       matchData: JSON.stringify(data.matchData) ?? null,
     },
   });
+  const parsedNewMatch = {
+    ...newMatch,
+    matchData: newMatch.matchData ? JSON.parse(newMatch.matchData) : null,
+  };
+  // Send SSE to notify clients about the update
+  const event = {
+    type: "match_update",
+    data: parsedNewMatch,
+  };
+  createServerSentEvent(event);
+
   return NextResponse.json(newMatch);
 }
