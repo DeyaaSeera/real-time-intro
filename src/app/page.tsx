@@ -1,11 +1,11 @@
 import Header from "./components/Header/Header";
-import ScoreBoard from "./components/ScoreBoard/scoreboard";
+import MatchList from "./components/MatchList/MatchList";
 
 export default function Home() {
   return (
     <>
       <Header />
-      <ScoreBoard />
+      <MatchList />
     </>
   );
 }

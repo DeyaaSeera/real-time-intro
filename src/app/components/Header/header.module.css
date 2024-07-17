@@ -1,9 +1,9 @@
 .header {
     display: flex;
-    background-color: #2958a8;
+    background-color: #f8d42c;
     justify-content: center;
     align-items: center;
-    color: #fff;
+    color: #2958a8;
 }
 .header img {
   width: 12rem;
