@@ -11,7 +11,6 @@ const MatchTeamInfo = ({ score, flag, name }: MatchTeamInfoProps) => {
             <div className={styles.flag}>{flag}</div>
             <div className={styles.teamName}>{name}</div>
             <div className={styles.score}>{score}</div>
-
         </div>
     );
 };
