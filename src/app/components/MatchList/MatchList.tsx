@@ -18,7 +18,7 @@ const MatchList = () => {
             {data && data.map((match: Match) => (
                 <div key={match.id} className={styles.gameSection}>
                     <MatchTeamInfo
-                        score={0}
+                        score={match.matchData.result[match.matchData.teams[0].name]}
                         flag={match?.matchData?.teams[0].flag}
                         name={match?.matchData?.teams[0].name}
                     />
@@ -27,7 +27,7 @@ const MatchList = () => {
                         {match.isStarted && !match.isEnd ? <FlagStatus title="playing ..." color="#07ac07" /> : <FlagStatus title="Game End" color="red" />}
                     </div>
                     <MatchTeamInfo
-                        score={0}
+                        score={match.matchData.result[match.matchData.teams[1].name]}
                         flag={match?.matchData?.teams[1].flag}
                         name={match?.matchData?.teams[1].name}
                     />
