@@ -5,6 +5,8 @@ import { useDraw } from '@/app/hooks/useDraw'
 import { ChromePicker } from 'react-color'
 
 import { drawLine } from '@/app/utils/drawLine'
+import { io } from 'socket.io-client';
+const socket = io('http://localhost:3001')
 
 export default function Draw() {
   const [color, setColor] = useState<string>('#000')
@@ -13,9 +15,40 @@ export default function Draw() {
   useEffect(() => {
     const ctx = canvasRef.current?.getContext('2d')
 
+    socket.emit('client-ready')
+
+    socket.on('get-canvas-state', () => {
+      if (!canvasRef.current?.toDataURL()) return
+      console.log('sending canvas state')
+      socket.emit('canvas-state', canvasRef.current.toDataURL())
+    })
+
+    socket.on('canvas-state-from-server', (state: string) => {
+      console.log('I received the state')
+      const img = new Image()
+      img.src = state
+      img.onload = () => {
+        ctx?.drawImage(img, 0, 0)
+      }
+    })
+
+    socket.on('draw-line', ({ prevPoint, currentPoint, color }) => {
+      if (!ctx) return console.log('no ctx here')
+      drawLine({ prevPoint, currentPoint, ctx, color })
+    })
+
+    socket.on('clear', clear)
+
+    return () => {
+      socket.off('draw-line')
+      socket.off('get-canvas-state')
+      socket.off('canvas-state-from-server')
+      socket.off('clear')
+    }
   }, [canvasRef])
 
   function createLine({ prevPoint, currentPoint, ctx }: any) {
+    socket.emit('draw-line', { prevPoint, currentPoint, color })
     drawLine({ prevPoint, currentPoint, ctx, color })
   }
 
@@ -23,12 +56,12 @@ export default function Draw() {
     <div className='w-screen h-screen bg-white flex justify-center items-center'>
       <div className='flex flex-col gap-10 pr-10'>
         <ChromePicker color={color} onChange={(e: { hex: SetStateAction<string> }) => setColor(e.hex)} />
-        {/* <button
+        <button
           type='button'
           className='p-2 rounded-md border border-black'
           onClick={() => socket.emit('clear')}>
           Clear canvas
-        </button> */}
+        </button>
       </div>
       <canvas
         ref={canvasRef}
