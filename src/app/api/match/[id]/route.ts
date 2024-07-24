@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
-
 const prisma = new PrismaClient();
 
 export async function GET(
@@ -48,6 +47,11 @@ export async function PUT(
         ? JSON.parse(updatedMatch.matchData)
         : null,
     };
+    const io = global.io
+    // Emit event via Socket.IO
+    if (io) {
+      io.emit("match-updated", parsedUpdatedMatch);
+    }
 
     return NextResponse.json(parsedUpdatedMatch);
   } catch (error) {
@@ -57,7 +61,7 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string }; res: any }
 ) {
   const { id } = params;
 
@@ -65,6 +69,12 @@ export async function DELETE(
     await prisma.match.delete({
       where: { id: Number(id) },
     });
+    const io = global.io
+    // Emit event via Socket.IO
+    if (io) {
+      io.emit("match-deleted", { id: Number(id) });
+    }
+
     return NextResponse.json({ message: "Match deleted successfully" });
   } catch (error) {
     return NextResponse.json({ error: error }, { status: 500 });
