@@ -5,6 +5,10 @@
     justify-content: center;
     padding: 2rem 0;
     flex-wrap: wrap;
+    gap: 16px;
+}
+.loading {
+    padding: 4rem 0;
 }
 .gameSection {
     display: flex;
@@ -14,6 +18,8 @@
     padding: 10px;
     border-radius: 8px;
     width: 100%;
+    background: #fff;
+    border: 1px solid #ddd;
 }
 .matchInfo {
     display: flex;

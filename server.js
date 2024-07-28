@@ -23,11 +23,6 @@ app.prepare().then(() => {
     socket.on("disconnect", () => {
       console.log("Client disconnected", socket.id);
     });
-
-    socket.on("message", (message) => {
-      console.log("Message received:", message);
-      io.emit("message", message);
-    });
   });
   global.io = io;
 

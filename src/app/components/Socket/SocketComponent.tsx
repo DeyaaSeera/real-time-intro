@@ -1,17 +1,51 @@
 "use client"; // This is a client component 👈🏽
 import { useEffect, useState } from "react";
 import MatchTeamInfo from "../MatchTeamInfo/MatchTeamInfo";
-import styles from "./MatchList.module.css";
+import styles from "@/app/components/MatchList/MatchList.module.css";
 import { getMatches } from "@/app/services/matches";
 import { MatcheResponse, Match } from "@/app/types/matches";
 import FlagStatus from "../FlagStatus/FlagStatus";
+import { Socket, io } from "socket.io-client";
 
-const MatchList = () => {
-  const [data, setData] = useState<MatcheResponse>();
+const SocketComponent = () => {
+  let socket: Socket;
+  const [data, setData] = useState<MatcheResponse>([]);
+
   useEffect(() => {
     getMatches().then((data) => {
       setData(data);
     });
+    // Initialize Socket.IO client
+    socket = io("http://localhost:3000", {
+      path: "/api/socketio",
+    });
+
+    // Handle match updates
+    socket.on("match-updated", (data) => {
+      setData((prevMatches) => {
+        const matchIndex = prevMatches.findIndex(
+          (match) => match.id === data.id
+        );
+        if (matchIndex !== -1) {
+          const updatedMatches = [...prevMatches];
+          updatedMatches[matchIndex] = data;
+          return updatedMatches;
+        } else {
+          return [...prevMatches, data];
+        }
+      });
+    });
+
+    // Handle match deletions
+    socket.on("match-deleted", (data) => {
+      setData((prevMatches) =>
+        prevMatches.filter((match) => match.id !== data.id)
+      );
+    });
+
+    return () => {
+      socket.disconnect();
+    };
   }, []);
   return (
     <section className={styles.scoreBoard}>
@@ -48,4 +82,4 @@ const MatchList = () => {
   );
 };
 
-export default MatchList;
+export default SocketComponent;

@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { createServerSentEvent } from "@/app/utils/server-push.utils";
 
 const prisma = new PrismaClient();
+// const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // GET /api/match
 export async function GET() {
@@ -11,10 +13,19 @@ export async function GET() {
     ...match,
     matchData: match.matchData ? JSON.parse(match.matchData) : null,
   }));
+  // Long Polling
+  // console.log("Started")
+  // await delay(1000)
+  // console.log("Done 15%")
+  // await delay(1000)
+  // console.log("Done 35%")
+  // await delay(1000)
+  // console.log("Done 75%")
+  // await delay(1000)
   return NextResponse.json(parsedMatches);
 }
 
-// Data example 
+// Data example
 // const dataShape = {
 //   startTime: "2024-07-16T13:34:00.000Z",
 //   matchData: {
@@ -61,7 +72,6 @@ export async function GET() {
 //   },
 // };
 
-
 // POST /api/match
 export async function POST(request: Request) {
   const data = await request.json();
@@ -74,5 +84,24 @@ export async function POST(request: Request) {
       matchData: JSON.stringify(data.matchData) ?? null,
     },
   });
-  return NextResponse.json(newMatch);
+  const parsedNewMatch = {
+    ...newMatch,
+    matchData: newMatch.matchData ? JSON.parse(newMatch.matchData) : null,
+  };
+
+  // Send event using socket io
+  // const io = global.io;
+  // // Emit event via Socket.IO
+  // if (io) {
+  //   io.emit("match-updated", parsedNewMatch);
+  // }
+
+  // Send SSE to notify clients about the update
+  // const event = {
+  //   type: "match_update",
+  //   data: parsedNewMatch,
+  // };
+  // createServerSentEvent(event);
+
+  return NextResponse.json(parsedNewMatch);
 }

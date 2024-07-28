@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { createServerSentEvent } from "@/app/utils/server-push.utils";
+
 const prisma = new PrismaClient();
 
 export async function GET(
@@ -47,11 +49,19 @@ export async function PUT(
         ? JSON.parse(updatedMatch.matchData)
         : null,
     };
-    const io = global.io
-    // Emit event via Socket.IO
-    if (io) {
-      io.emit("match-updated", parsedUpdatedMatch);
-    }
+    // Send event using socket io
+    // const io = global.io;
+    // // Emit event via Socket.IO
+    // if (io) {
+    //   io.emit("match-updated", parsedUpdatedMatch);
+    // }
+
+    // Send SSE to notify clients about the update
+    // const event = {
+    //   type: "match_update",
+    //   data: parsedUpdatedMatch,
+    // };
+    // createServerSentEvent(event);
 
     return NextResponse.json(parsedUpdatedMatch);
   } catch (error) {
@@ -69,11 +79,20 @@ export async function DELETE(
     await prisma.match.delete({
       where: { id: Number(id) },
     });
-    const io = global.io
-    // Emit event via Socket.IO
-    if (io) {
-      io.emit("match-deleted", { id: Number(id) });
-    }
+
+    // Send event using socket io 
+    // const io = global.io;
+    // // Emit event via Socket.IO
+    // if (io) {
+    //   io.emit("match-deleted", { id: Number(id) });
+    // }
+
+    // Send SSE to notify clients about the deletion
+    // const event = {
+    //   type: "match_delete",
+    //   id: Number(id),
+    // };
+    // createServerSentEvent(event);
 
     return NextResponse.json({ message: "Match deleted successfully" });
   } catch (error) {
