@@ -49,13 +49,19 @@ export async function PUT(
         ? JSON.parse(updatedMatch.matchData)
         : null,
     };
+    // Send event using socket io
+    // const io = global.io;
+    // // Emit event via Socket.IO
+    // if (io) {
+    //   io.emit("match-updated", parsedUpdatedMatch);
+    // }
 
     // Send SSE to notify clients about the update
-    const event = {
-      type: "match_update",
-      data: parsedUpdatedMatch,
-    };
-    createServerSentEvent(event);
+    // const event = {
+    //   type: "match_update",
+    //   data: parsedUpdatedMatch,
+    // };
+    // createServerSentEvent(event);
 
     return NextResponse.json(parsedUpdatedMatch);
   } catch (error) {
@@ -65,7 +71,7 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string }; res: any }
 ) {
   const { id } = params;
 
@@ -74,12 +80,19 @@ export async function DELETE(
       where: { id: Number(id) },
     });
 
+    // Send event using socket io 
+    // const io = global.io;
+    // // Emit event via Socket.IO
+    // if (io) {
+    //   io.emit("match-deleted", { id: Number(id) });
+    // }
+
     // Send SSE to notify clients about the deletion
-    const event = {
-      type: "match_delete",
-      id: Number(id),
-    };
-    createServerSentEvent(event);
+    // const event = {
+    //   type: "match_delete",
+    //   id: Number(id),
+    // };
+    // createServerSentEvent(event);
 
     return NextResponse.json({ message: "Match deleted successfully" });
   } catch (error) {

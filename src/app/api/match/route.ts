@@ -88,12 +88,20 @@ export async function POST(request: Request) {
     ...newMatch,
     matchData: newMatch.matchData ? JSON.parse(newMatch.matchData) : null,
   };
-  // Send SSE to notify clients about the update
-  const event = {
-    type: "match_update",
-    data: parsedNewMatch,
-  };
-  createServerSentEvent(event);
 
-  return NextResponse.json(newMatch);
+  // Send event using socket io
+  // const io = global.io;
+  // // Emit event via Socket.IO
+  // if (io) {
+  //   io.emit("match-updated", parsedNewMatch);
+  // }
+
+  // Send SSE to notify clients about the update
+  // const event = {
+  //   type: "match_update",
+  //   data: parsedNewMatch,
+  // };
+  // createServerSentEvent(event);
+
+  return NextResponse.json(parsedNewMatch);
 }

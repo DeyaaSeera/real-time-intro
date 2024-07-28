@@ -3,6 +3,7 @@ import LongPollingComponent from "./components/LongPollingComponent/LongPollingC
 import MatchList from "./components/MatchList/MatchList";
 import ServerSendEvents from "./components/ServerSendEvents/ServerSendEvents";
 import ShortPollingComponent from "./components/ShortPollingComponent/ShortPollingComponent";
+import SocketComponent from "./components/Socket/SocketComponent";
 
 export default function Home() {
   return (
@@ -12,6 +13,7 @@ export default function Home() {
       {/* <ShortPollingComponent /> */}
       {/* <LongPollingComponent /> */}
       {/* <ServerSendEvents /> */}
+      {/* <SocketComponent /> */}
     </>
   );
 }
