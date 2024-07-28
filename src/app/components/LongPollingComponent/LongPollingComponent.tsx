@@ -14,7 +14,7 @@ const LongPollingComponent = () => {
             getMatches().then((data) => {
                 setData(data);
                 // Start a new long poll request
-                setTimeout(() => getMacthData(), 1000)
+                setTimeout(() => getMacthData(), 3000)
             });
         };
 
