@@ -1,17 +1,49 @@
 "use client"; // This is a client component 👈🏽
 import { useEffect, useState } from "react";
 import MatchTeamInfo from "../MatchTeamInfo/MatchTeamInfo";
-import styles from "./MatchList.module.css";
+import styles from "@/app/components/MatchList/MatchList.module.css";
 import { getMatches } from "@/app/services/matches";
 import { MatcheResponse, Match } from "@/app/types/matches";
 import FlagStatus from "../FlagStatus/FlagStatus";
 
-const MatchList = () => {
-  const [data, setData] = useState<MatcheResponse>();
+const ServerSendEvents = () => {
+  const [data, setData] = useState<MatcheResponse>([]);
   useEffect(() => {
     getMatches().then((data) => {
       setData(data);
     });
+
+    const eventSource = new EventSource(`/api/match/sse`);
+
+    eventSource.onmessage = (event) => {
+      const eventData = JSON.parse(event.data);
+      if (eventData.type === "match_update") {
+        setData((prevMatches) => {
+          const matchIndex = prevMatches.findIndex(
+            (match) => match.id === eventData.data.id
+          );
+          if (matchIndex !== -1) {
+            const updatedMatches = [...prevMatches];
+            updatedMatches[matchIndex] = eventData.data;
+            return updatedMatches;
+          } else {
+            return [...prevMatches, eventData.data];
+          }
+        });
+      } else if (eventData.type === "match_delete") {
+        setData((prevMatches) =>
+          prevMatches.filter((match) => match.id !== eventData.id)
+        );
+      }
+    };
+
+    eventSource.onerror = (error) => {
+      console.error("SSE Error:", error);
+    };
+
+    return () => {
+      eventSource.close();
+    };
   }, []);
   return (
     <section className={styles.scoreBoard}>
@@ -48,4 +80,4 @@ const MatchList = () => {
   );
 };
 
-export default MatchList;
+export default ServerSendEvents;

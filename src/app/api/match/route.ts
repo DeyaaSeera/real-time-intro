@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import { createServerSentEvent } from "@/app/utils/server-push.utils";
 
 const prisma = new PrismaClient();
+// const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // GET /api/match
 export async function GET() {
@@ -12,6 +13,15 @@ export async function GET() {
     ...match,
     matchData: match.matchData ? JSON.parse(match.matchData) : null,
   }));
+  // Long Polling
+  // console.log("Started")
+  // await delay(1000)
+  // console.log("Done 15%")
+  // await delay(1000)
+  // console.log("Done 35%")
+  // await delay(1000)
+  // console.log("Done 75%")
+  // await delay(1000)
   return NextResponse.json(parsedMatches);
 }
 
