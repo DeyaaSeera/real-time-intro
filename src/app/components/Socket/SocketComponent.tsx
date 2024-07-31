@@ -16,7 +16,7 @@ const SocketComponent = () => {
       setData(data);
     });
     // Initialize Socket.IO client
-    socket = io("http://localhost:3000", {
+    socket = io(window.location.href, {
       path: "/api/socketio",
     });
 
